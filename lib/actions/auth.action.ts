@@ -109,7 +109,7 @@ export async function getCurrentUser(): Promise<User | null> {
     //     maxAge: 0,
     //     path: '/',
     //   });
-    //   return null; // force logout
+    //   return null; // force logout n
     // }
     const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
 
