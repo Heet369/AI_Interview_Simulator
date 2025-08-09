@@ -12,7 +12,7 @@ export async function setSessionCookie(idToken: string) {
 
   // Create session cookie
   const sessionCookie = await auth.createSessionCookie(idToken, {
-    expiresIn:  ONE_WEEK*1000, // milliseconds
+    expiresIn: ONE_WEEK * 1000, // milliseconds
   });
 
   // Set cookie in the browser
@@ -79,8 +79,12 @@ export async function signIn(params: SignInParams) {
       };
 
     await setSessionCookie(idToken);
+    return {
+      success: true,
+      message: "Signed in successfully.",
+    };
   } catch (error: any) {
-    console.log("");
+    console.error("Error signing in:", error);
 
     return {
       success: false,

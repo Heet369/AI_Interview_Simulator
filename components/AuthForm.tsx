@@ -80,6 +80,15 @@ const AuthForm = ({ type }: { type: FormType }) => {
           return;
         }
 
+        const result = await signIn({
+          email,
+          idToken,
+        });
+        if (!result.success) {
+          toast.error(result.message);
+          return;
+        }
+
         await signIn({
           email,
           idToken,
@@ -93,24 +102,24 @@ const AuthForm = ({ type }: { type: FormType }) => {
       toast.error(`There was an error: ${error}`);
     }
 
-    
+
   };
 
   const handleForgotPassword = async () => {
-  const email = form.getValues("email");
+    const email = form.getValues("email");
 
-  if (!email) {
-    toast.error("Please enter your email to reset password.");
-    return;
-  }
+    if (!email) {
+      toast.error("Please enter your email to reset password.");
+      return;
+    }
 
-  try {
-    await sendPasswordResetEmail(auth, email);
-    toast.success("Password reset email sent!");
-  } catch (error: any) {
-    toast.error(error.message || "Failed to send reset email.");
-  }
-};
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Password reset email sent!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send reset email.");
+    }
+  };
 
   const isSignIn = type === "sign-in";
 
