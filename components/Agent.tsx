@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from '@/constants';
-// import { createFeedback } from "@/lib/actions/general.action";
+import { createFeedback } from '@/lib/actions/general.action';
 
 enum CallStatus {
     INACTIVE = 'INACTIVE',
@@ -20,11 +20,12 @@ interface SavedMessage {
     content: string;
 }
 
-const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) => {
+const Agent = ({ userName, userId, type, interviewId,feedbackId, questions }: AgentProps) => {
     const router = useRouter();
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const [messages, setMessages] = useState<SavedMessage[]>([]);
+    const [lastMessage, setLastMessage] = useState<string>("");
 
     useEffect(() => {
         const onCallStart = () => {
@@ -70,13 +71,17 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
 
     }, [vapi])
 
+    
+
     const handleGenerateFeedback = async (messages: SavedMessage[]) => {
         console.log("Generate feedback here.");
 
-        const { success, id } = {
-            success: true,
-            id: 'feedback-id'
-        }
+        const { success, feedbackId: id } = await createFeedback({
+        interviewId: interviewId!,
+        userId: userId!,
+        transcript: messages,
+        feedbackId,
+      });
 
         if (success && id) {
             router.push(`/interview/${interviewId}/feedback`);
