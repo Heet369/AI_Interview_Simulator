@@ -84,8 +84,8 @@ const Agent = ({ userName, userId, type, interviewId,feedbackId, questions }: Ag
       });
 
         if (success && id) {
-            router.push(`/interview/${interviewId}/feedback`);
-        }else {
+        router.push(`/interview/${interviewId}/feedback`);
+      } else {
         console.log("Error saving feedback");
         router.push("/");
       }
@@ -104,6 +104,7 @@ const Agent = ({ userName, userId, type, interviewId,feedbackId, questions }: Ag
     }, [messages, callStatus, router, type, userId]);
 
     const handleCall = async () => {
+
     setCallStatus(CallStatus.CONNECTING);
 
     if (type === "generate") {

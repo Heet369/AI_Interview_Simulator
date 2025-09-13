@@ -112,6 +112,10 @@ export async function getLatestInterviews(
 export async function getInterviewsByUserId(
   userId: string
 ): Promise<Interview[] | null> {
+  if (!userId) {
+    return []; // Return an empty array if there's no user
+  }
+  
   const interviews = await db
     .collection("interviews")
     .where("userId", "==", userId)
@@ -123,3 +127,59 @@ export async function getInterviewsByUserId(
     ...doc.data(),
   })) as Interview[];
 }
+
+
+
+
+// New function to get questions from the bank
+export const getQuestionsFromBank = async ({ domain }: { domain: string }) => {
+  try {
+    const docId = domain.toLowerCase().replace(/\s+/g, '-');
+    const doc = await db.collection("codingQuestions").doc(docId).get();
+
+    if (!doc.exists) {
+      return null;
+    }
+
+    const data = doc.data();
+    // Return a random set of 5 questions if more than 5 exist
+    const questions = data?.questions || [];
+    if (questions.length > 5) {
+      return questions.sort(() => 0.5 - Math.random()).slice(0, 5);
+    }
+    
+    return questions;
+  } catch (error) {
+    console.error("Error fetching questions from bank:", error);
+    return null;
+  }
+};
+
+// Add this new function to lib/actions/general.action.ts
+
+export const getCodingResultByInterviewId = async ({
+  interviewId,
+  userId,
+}: {
+  interviewId: string;
+  userId: string;
+}) => {
+  try {
+    const snapshot = await db
+      .collection("codingResults")
+      .where("interviewId", "==", interviewId)
+      .where("userId", "==", userId)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() };
+  } catch (error) {
+    console.error("Error fetching coding result:", error);
+    return null;
+  }
+};

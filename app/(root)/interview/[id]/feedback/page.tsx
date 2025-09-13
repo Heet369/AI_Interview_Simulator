@@ -17,6 +17,9 @@ const Feedback = async ({ params }: RouteParams) => {
   const interview = await getInterviewById(id);
   if (!interview) redirect("/");
 
+  console.log("🔎 Searching with Interview ID from URL:", id);
+  console.log("👤 Searching with User ID from session:", user?.id!);
+
   const feedback = await getFeedbackByInterviewId({
     interviewId: id,
     userId: user?.id!,
@@ -97,6 +100,17 @@ const Feedback = async ({ params }: RouteParams) => {
           <Link href="/" className="flex w-full justify-center">
             <p className="text-sm font-semibold text-primary-200 text-center">
               Back to dashboard
+            </p>
+          </Link>
+        </Button>
+
+        <Button className="btn-primary flex-1">
+          <Link
+            href={`/interview/${id}/coding`}
+            className="flex w-full justify-center"
+          >
+            <p className="text-sm font-semibold text-black text-center">
+              Start Coding Challenge
             </p>
           </Link>
         </Button>
